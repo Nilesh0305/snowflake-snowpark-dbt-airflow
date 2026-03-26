@@ -6,3 +6,7 @@ select
 from {{ ref('stg_orders') }} o
 join {{ ref('stg_customers') }} c
     on o.customer_id = c.customer_id
+
+{% if is_incremental() %}
+where o.order_date > (select max(order_date) from {{ this }})
+{% endif %}

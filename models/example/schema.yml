@@ -1,21 +1,56 @@
-
 version: 2
 
-models:
-    - name: my_first_dbt_model
-      description: "A starter dbt model"
-      columns:
-          - name: id
-            description: "The primary key for this table"
-            tests:
-                - unique
-                - not_null
+sources:
+  - name: raw
+    database: DBT_DEMO
+    schema: PUBLIC
+    tables:
+      - name: orders_raw
+      - name: customers_raw
 
-    - name: my_second_dbt_model
-      description: "A starter dbt model"
-      columns:
-          - name: id
-            description: "The primary key for this table"
-            tests:
-                - unique
-                - not_null
+models:
+
+  - name: stg_orders
+    description: "Staging view for orders data"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+
+      - name: amount
+
+      - name: order_date
+
+
+  - name: stg_customers
+    description: "Staging view for customers data"
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_name
+
+
+  - name: orders_final
+    description: "Final table joining orders and customers"
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+
+      - name: customer_name
+
+      - name: amount
+
+      - name: order_date
