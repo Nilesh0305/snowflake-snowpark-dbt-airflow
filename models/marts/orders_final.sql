@@ -1,3 +1,7 @@
+{{ config(
+    materialized='incremental'
+) }}
+
 select
     o.order_id,
     c.customer_name,
